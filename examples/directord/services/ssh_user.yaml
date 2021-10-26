@@ -1,0 +1,78 @@
+id: ssh_user
+type: service
+version: 1.0.0
+tasks:
+  - id: useradd
+    action: useradd
+    driver: directord
+    provides:
+      - ssh_user.useradd
+    requires:
+      - sshd.init
+    jobs:
+      - RUN: if ! id {{ tripleo_admin_user }}; then useradd {{ tripleo_admin_user }}; fi
+      - RUN: echo "{{ tripleo_admin_user }} ALL=(root) NOPASSWD:ALL" | tee /etc/sudoers.d/{{ tripleo_admin_user }}
+        vars:
+          chmod: "0440"
+
+  - id: sshdir
+    action: sshdir
+    driver: directord
+    provides:
+      - ssh_user.sshdir
+    requires:
+      - ssh_user.useradd
+    jobs:
+      - RUN: if [[ ! -d /home/{{ tripleo_admin_user }}/.ssh ]]; then mkdir -m 700 /home/{{ tripleo_admin_user }}/.ssh; fi
+      - RUN: chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} /home/{{ tripleo_admin_user }}/.ssh
+      - RUN: chcon system_u:object_r:ssh_home_t:s0 /home/{{ tripleo_admin_user }}/.ssh
+      - ADD: >
+          --blueprint files/ssh_user/ssh_config.j2 "/home/{{ tripleo_admin_user }}/.ssh/config"
+          --chmod 0600
+      - RUN: chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} /home/{{ tripleo_admin_user }}/.ssh/config
+
+  - id: keygen
+    action: keygen
+    driver: directord
+    provides:
+      - ssh_user.keygen
+    requires:
+      - ssh_user.sshdir
+    jobs:
+      - RUN: >-
+          --run-once
+          export KEY=/home/{{ tripleo_admin_user }}/.ssh/id_ed25519 ;
+          if [[ ! -e $KEY ]]; then ssh-keygen -q -t ed25519 -N "" -f $KEY; fi &&
+          if [[ ! -e ${KEY}.pub ]]; then ssh-keygen -y -f $KEY > ${KEY}.pub; fi &&
+          chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} $KEY ${KEY}.pub
+      - RUN: >-
+          --run-once
+          --stdout-arg tripleo_admin_user_ssh_public_key_base64
+          base64 -w 0 /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub
+      - QUERY: tripleo_admin_user_ssh_public_key_base64
+      - RUN: >-
+          --run-once
+          --stdout-arg tripleo_admin_user_ssh_private_key_base64
+          base64 -w 0 /home/{{ tripleo_admin_user }}/.ssh/id_ed25519
+      - QUERY: tripleo_admin_user_ssh_private_key_base64
+
+  - id: distrib
+    action: distrib
+    driver: directord
+    provides:
+      - ssh_user.distrib
+    requires:
+      - ssh_user.keygen
+    jobs:
+      - RUN: >-
+          if ! test -f /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub; then
+              echo "{{ query.values() | map(attribute='tripleo_admin_user_ssh_public_key_base64') | select('defined') | reject('==', None) | list | first }}" | base64 -d > /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub;
+          fi;
+      - RUN: >-
+          if ! test -f /home/{{ tripleo_admin_user }}/.ssh/id_ed25519; then
+              echo "{{ query.values() | map(attribute='tripleo_admin_user_ssh_private_key_base64') | select('defined') | reject('==', None) | list | first }}" | base64 -d > /home/{{ tripleo_admin_user }}/.ssh/id_ed25519;
+          fi;
+
+      - RUN: cp -p /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub /home/{{ tripleo_admin_user }}/.ssh/authorized_keys
+      - RUN: chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} /home/{{ tripleo_admin_user }}/.ssh/*
+      - RUN: chcon unconfined_u:object_r:ssh_home_t:s0 /home/{{ tripleo_admin_user }}/.ssh/*
