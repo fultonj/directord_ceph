@@ -1,2 +1,4 @@
 # directord_ceph
-Use directord.com to deploy ceph via cephadm
+
+Use [directord and task-core](https://github.com/Directord) to deploy ceph.
+
