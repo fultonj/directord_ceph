@@ -10,4 +10,4 @@ tasks:
     requires:
       - repos.init
     jobs:
-      - DNF: cephadm
+      - DNF: cephadm jq

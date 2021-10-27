@@ -1,2 +1,11 @@
 ---
 ssh_username: ceph-admin
+tripleo_cephadm_ssh_user: ceph-admin
+tripleo_cephadm_container_ns: "quay.io/ceph"
+tripleo_cephadm_container_image: "daemon"
+tripleo_cephadm_container_tag: "v6.0.4-stable-6.0-pacific-centos-8-x86_64"
+tripleo_cephadm_cluster: ceph
+tripleo_cephadm_admin_keyring: /etc/ceph/ceph.client.admin.keyring
+tripleo_cephadm_conf: /etc/ceph/ceph.conf
+tripleo_cephadm_fsid: fa37898b-a7ac-5d7e-865f-8a56cb2576a7
+tripleo_cephadm_first_mon_ip: 192.168.122.251

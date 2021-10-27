@@ -4,6 +4,7 @@ controller:
     - ssh_user
     - repos
     - ceph_packages
+    - ceph_bootstrap
 
 ceph-storage:
   services:
