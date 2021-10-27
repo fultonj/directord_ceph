@@ -48,12 +48,6 @@ Define variables necessary to deploy your service including your service's varia
 Map roles to services; include your new service on the role that needs it
 - [task-core-inventory-ceph.yaml](env/task-core-inventory-ceph.yaml)
 Map nodes to roles
-- [os-net-config.yaml](env/os-net-config.yaml)
-Overwrite the default 
-[os-net-config.yaml](https://github.com/directord/task-core/blob/main/examples/directord/services/os-net-config.yaml)
-file so that it uses my own 
-[os-net-config.yaml.j2](env/os-net-config.yaml.j2) 
-(I need it to update nic1, not nic2).
 
 
 ## Examples

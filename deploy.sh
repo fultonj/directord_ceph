@@ -20,9 +20,6 @@ fi
 if [ $COPY -eq 1 ]; then
     pushd env
 
-    #cp -v -f os-net-config.yaml.j2  ~/
-    #cp -v -f os-net-config.yaml ~/task-core/examples/directord/services/os-net-config.yaml
-
     cp -v -f task-core-inventory-ceph.yaml ~/
     cp -v -f task-core-ceph.yaml ~/
     cp -v -f 2node_config.yaml ~/task-core/examples/directord/services/2node_config.yaml
