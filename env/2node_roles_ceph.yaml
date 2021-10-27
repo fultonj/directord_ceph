@@ -2,8 +2,12 @@ controller:
   services:
     - 2node_config
     - ssh_user
+    - repos
+    - ceph_packages
 
 ceph-storage:
   services:
     - 2node_config
     - ssh_user
+    - repos
+    - ceph_packages
