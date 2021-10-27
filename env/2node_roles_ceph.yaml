@@ -6,7 +6,7 @@ controller:
     - selinux
     - ssh_user
 
-compute:
+ceph-storage:
   services:
     - 2node_config
     - hostname
