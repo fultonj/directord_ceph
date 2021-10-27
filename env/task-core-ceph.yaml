@@ -1,4 +1,2 @@
 ---
-tripleo_admin_user: ceph-admin
-tripleo_admin_generate_key: true
-distribute_private_key: true
+ssh_username: ceph-admin

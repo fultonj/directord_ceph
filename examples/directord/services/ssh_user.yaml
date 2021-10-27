@@ -10,8 +10,8 @@ tasks:
     requires:
       - config.init
     jobs:
-      - RUN: if ! id {{ tripleo_admin_user }}; then useradd {{ tripleo_admin_user }}; fi
-      - RUN: echo "{{ tripleo_admin_user }} ALL=(root) NOPASSWD:ALL" | tee /etc/sudoers.d/{{ tripleo_admin_user }}
+      - RUN: if ! id {{ ssh_username }}; then useradd {{ ssh_username }}; fi
+      - RUN: echo "{{ ssh_username }} ALL=(root) NOPASSWD:ALL" | tee /etc/sudoers.d/{{ ssh_username }}
         vars:
           chmod: "0440"
 
@@ -23,13 +23,13 @@ tasks:
     requires:
       - ssh_user.useradd
     jobs:
-      - RUN: if [[ ! -d /home/{{ tripleo_admin_user }}/.ssh ]]; then mkdir -m 700 /home/{{ tripleo_admin_user }}/.ssh; fi
-      - RUN: chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} /home/{{ tripleo_admin_user }}/.ssh
-      - RUN: chcon system_u:object_r:ssh_home_t:s0 /home/{{ tripleo_admin_user }}/.ssh
+      - RUN: if [[ ! -d /home/{{ ssh_username }}/.ssh ]]; then mkdir -m 700 /home/{{ ssh_username }}/.ssh; fi
+      - RUN: chown {{ ssh_username }}:{{ ssh_username }} /home/{{ ssh_username }}/.ssh
+      - RUN: chcon system_u:object_r:ssh_home_t:s0 /home/{{ ssh_username }}/.ssh
       - ADD: >
-          --blueprint files/ssh_user/ssh_config.j2 "/home/{{ tripleo_admin_user }}/.ssh/config"
+          --blueprint files/ssh_user/ssh_config.j2 "/home/{{ ssh_username }}/.ssh/config"
           --chmod 0600
-      - RUN: chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} /home/{{ tripleo_admin_user }}/.ssh/config
+      - RUN: chown {{ ssh_username }}:{{ ssh_username }} /home/{{ ssh_username }}/.ssh/config
 
   - id: keygen
     action: keygen
@@ -41,20 +41,20 @@ tasks:
     jobs:
       - RUN: >-
           --run-once
-          export KEY=/home/{{ tripleo_admin_user }}/.ssh/id_ed25519 ;
+          export KEY=/home/{{ ssh_username }}/.ssh/id_ed25519 ;
           if [[ ! -e $KEY ]]; then ssh-keygen -q -t ed25519 -N "" -f $KEY; fi &&
           if [[ ! -e ${KEY}.pub ]]; then ssh-keygen -y -f $KEY > ${KEY}.pub; fi &&
-          chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} $KEY ${KEY}.pub
+          chown {{ ssh_username }}:{{ ssh_username }} $KEY ${KEY}.pub
       - RUN: >-
           --run-once
-          --stdout-arg tripleo_admin_user_ssh_public_key_base64
-          base64 -w 0 /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub
-      - QUERY: tripleo_admin_user_ssh_public_key_base64
+          --stdout-arg ssh_username_ssh_public_key_base64
+          base64 -w 0 /home/{{ ssh_username }}/.ssh/id_ed25519.pub
+      - QUERY: ssh_username_ssh_public_key_base64
       - RUN: >-
           --run-once
-          --stdout-arg tripleo_admin_user_ssh_private_key_base64
-          base64 -w 0 /home/{{ tripleo_admin_user }}/.ssh/id_ed25519
-      - QUERY: tripleo_admin_user_ssh_private_key_base64
+          --stdout-arg ssh_username_ssh_private_key_base64
+          base64 -w 0 /home/{{ ssh_username }}/.ssh/id_ed25519
+      - QUERY: ssh_username_ssh_private_key_base64
 
   - id: distrib
     action: distrib
@@ -65,14 +65,14 @@ tasks:
       - ssh_user.keygen
     jobs:
       - RUN: >-
-          if ! test -f /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub; then
-              echo "{{ query.values() | map(attribute='tripleo_admin_user_ssh_public_key_base64') | select('defined') | reject('==', None) | list | first }}" | base64 -d > /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub;
+          if ! test -f /home/{{ ssh_username }}/.ssh/id_ed25519.pub; then
+              echo "{{ query.values() | map(attribute='ssh_username_ssh_public_key_base64') | select('defined') | reject('==', None) | list | first }}" | base64 -d > /home/{{ ssh_username }}/.ssh/id_ed25519.pub;
           fi;
       - RUN: >-
-          if ! test -f /home/{{ tripleo_admin_user }}/.ssh/id_ed25519; then
-              echo "{{ query.values() | map(attribute='tripleo_admin_user_ssh_private_key_base64') | select('defined') | reject('==', None) | list | first }}" | base64 -d > /home/{{ tripleo_admin_user }}/.ssh/id_ed25519;
+          if ! test -f /home/{{ ssh_username }}/.ssh/id_ed25519; then
+              echo "{{ query.values() | map(attribute='ssh_username_ssh_private_key_base64') | select('defined') | reject('==', None) | list | first }}" | base64 -d > /home/{{ ssh_username }}/.ssh/id_ed25519;
           fi;
 
-      - RUN: cp -p /home/{{ tripleo_admin_user }}/.ssh/id_ed25519.pub /home/{{ tripleo_admin_user }}/.ssh/authorized_keys
-      - RUN: chown {{ tripleo_admin_user }}:{{ tripleo_admin_user }} /home/{{ tripleo_admin_user }}/.ssh/*
-      - RUN: chcon unconfined_u:object_r:ssh_home_t:s0 /home/{{ tripleo_admin_user }}/.ssh/*
+      - RUN: cp -p /home/{{ ssh_username }}/.ssh/id_ed25519.pub /home/{{ ssh_username }}/.ssh/authorized_keys
+      - RUN: chown {{ ssh_username }}:{{ ssh_username }} /home/{{ ssh_username }}/.ssh/*
+      - RUN: chcon unconfined_u:object_r:ssh_home_t:s0 /home/{{ ssh_username }}/.ssh/*
