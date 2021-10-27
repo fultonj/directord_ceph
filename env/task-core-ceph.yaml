@@ -1,5 +1,4 @@
 ---
-ssh_username: ceph-admin
 tripleo_cephadm_ssh_user: ceph-admin
 tripleo_cephadm_container_ns: "quay.io/ceph"
 tripleo_cephadm_container_image: "daemon"
