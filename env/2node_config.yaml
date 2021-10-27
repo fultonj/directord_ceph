@@ -9,9 +9,7 @@ tasks:
     provides:
       - config.init
     requires:
-      # - repos.init
       - hostname.init
-      # - tripleo_packages.init
     jobs:
       - ADD: /home/stack/task-core-ceph.yaml /var/tmp/directord-config.yaml
       - CACHEFILE: /var/tmp/directord-config.yaml
