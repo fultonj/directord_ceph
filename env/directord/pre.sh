@@ -4,6 +4,7 @@ GIT=1
 SSH=1
 FILES=1
 TMATE=1
+DISKS=1
 
 if [ $GIT -eq 1 ]; then
     git config --global user.email fulton@redhat.com
@@ -41,4 +42,11 @@ if [ $TMATE -eq 1 ]; then
     popd
     touch /home/stack/.tmate.conf
     tmate --help
+fi
+
+DISKS=1
+if [ $DISKS -eq 1 ]; then
+    ssh -i ~/.ssh/id_ed25519 192.168.122.250 "sudo dnf install -y util-linux lvm2"
+    URL=https://raw.githubusercontent.com/fultonj/xena/main/standalone/disks.sh
+    ssh -i ~/.ssh/id_ed25519 192.168.122.250 "curl $URL | bash "
 fi
