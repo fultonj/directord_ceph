@@ -1,15 +1,9 @@
 controller:
   services:
     - 2node_config
-    - hostname
-    - hosts
-    - selinux
     - ssh_user
 
 ceph-storage:
   services:
     - 2node_config
-    - hostname
-    - hosts
-    - selinux
     - ssh_user

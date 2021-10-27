@@ -8,8 +8,6 @@ tasks:
     driver: directord
     provides:
       - config.init
-    requires:
-      - hostname.init
     jobs:
       - ADD: /home/stack/task-core-ceph.yaml /var/tmp/directord-config.yaml
       - CACHEFILE: /var/tmp/directord-config.yaml
