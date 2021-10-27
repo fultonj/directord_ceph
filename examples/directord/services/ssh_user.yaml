@@ -7,8 +7,8 @@ tasks:
     driver: directord
     provides:
       - ssh_user.useradd
-    requires:
-      - sshd.init
+    # requires:
+    #   - sshd.init
     jobs:
       - RUN: if ! id {{ tripleo_admin_user }}; then useradd {{ tripleo_admin_user }}; fi
       - RUN: echo "{{ tripleo_admin_user }} ALL=(root) NOPASSWD:ALL" | tee /etc/sudoers.d/{{ tripleo_admin_user }}
