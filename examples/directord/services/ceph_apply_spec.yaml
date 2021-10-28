@@ -1,0 +1,23 @@
+id: ceph_apply_spec
+type: service
+version: 1.0.0
+tasks:
+  - id: init
+    action: run
+    driver: directord
+    provides:
+      - ceph_apply_spec.init
+    requires:
+      - cephadm_bootstrap.init
+    jobs:
+      - ADD: >
+          --blueprint files/ceph_apply_spec/ceph_spec.j2 "/home/{{ tripleo_cephadm_ssh_user }}/ceph_spec.yaml"
+          --chmod 0600
+      - RUN: >-
+          --run-once
+          CID=$(sudo cephadm ls | jq '.[]' | jq 'select(.name | test("^mon*")).container_id' | sed s/\"//g);
+          sudo podman cp /home/{{ tripleo_cephadm_ssh_user }}/ceph_spec.yaml $CID:/tmp/ceph_spec.yaml;
+          sudo podman cp {{ tripleo_cephadm_admin_keyring }} $CID:{{ tripleo_cephadm_admin_keyring }};
+          NAME=$(sudo cephadm ls | jq '.[]' | jq 'select(.name | test("^mon*")).name' | sed s/\"//g);
+          sudo cephadm enter --name $NAME -- ceph orch apply --in-file /tmp/ceph_spec.yaml;
+          sudo cephadm enter --name $NAME -- rm {{ tripleo_cephadm_admin_keyring }} /tmp/ceph_spec.yaml;

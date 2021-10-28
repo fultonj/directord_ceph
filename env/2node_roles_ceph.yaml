@@ -5,6 +5,7 @@ controller:
     - repos
     - ceph_packages
     - ceph_bootstrap
+    - ceph_apply_spec
 
 ceph-storage:
   services:
