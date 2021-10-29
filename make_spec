@@ -1,0 +1,30 @@
+#!/bin/bash
+# Pretend this is a call to a command provided by python-tripleoclient:
+# 
+#   openstack overcloud ceph spec
+# 
+# I am doing this with ansible as a wrapper to our existing module
+# just for my POC. So I can call it from task-core. As per the spec:
+# 
+# "Port Ansible modules and actions into pure Python or Directord components"
+# https://review.opendev.org/801630
+
+DST=/home/stack/directord_ceph/examples/directord/services/files/ceph_apply_spec
+
+if [[ ! -e /usr/bin/ansible ]]; then
+    sudo dnf install ansible -y
+fi
+if [[ ! -e /usr/share/ansible/plugins/modules/ceph_spec_bootstrap.py ]]; then
+    sudo dnf install tripleo-ansible -y
+fi
+if [[ ! -e ~/roles_data.yaml ]]; then
+    URL=https://raw.githubusercontent.com/openstack/tripleo-heat-templates/master
+    curl $URL/roles_data.yaml > ~/roles_data.yaml
+fi
+
+ansible localhost -m ceph_spec_bootstrap \
+        -a "deployed_metalsmith=env/deployed_metal.yaml \
+        new_ceph_spec=$DST/ceph_spec.yaml
+        tripleo_roles=/home/stack/roles_data.yaml"
+
+echo $DST/ceph_spec.yaml

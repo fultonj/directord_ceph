@@ -2,9 +2,9 @@ id: ceph_make_spec
 type: service
 version: 1.0.0
 tasks:
-  - id: local
+  - id: init
     driver: local
     provides:
       - ceph_make_spec.init
     command: >
-      echo "I need to create files/ceph_apply_spec/ceph_spec.yaml" > /tmp/foo
+      /home/stack/directord_ceph/make_spec
