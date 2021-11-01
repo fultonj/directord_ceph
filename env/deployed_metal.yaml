@@ -1,22 +1,16 @@
+---
 parameter_defaults:
   ControllerCount: 1
+  ControllerHostnameFormat: 'controller-%index%'
   CephStorageCount: 1
-  ControllerHostnameFormat: '%stackname%-controller-%index%'
-  CephStorageHostnameFormat: '%stackname%-cephstorage-%index%'
+  CephStorageHostnameFormat: 'cephstorage-%index%'
   DeployedServerPortMap:
-    overcloud-controller-0-ctlplane:
+    node0-ctlplane:
       fixed_ips:
-      - ip_address: 192.168.122.251
-    overcloud-cephstorage-0-ctlplane:
+        - ip_address: 192.168.122.251
+    node1-ctlplane:
       fixed_ips:
-      - ip_address: 192.168.122.250
+        - ip_address: 192.168.122.250
   HostnameMap:
-    Controller: overcloud-controller-0
-    CephStorage: overcloud-cephstorage-0
-  NodePortMap:
-    overcloud-controller-0:
-      ctlplane:
-        ip_address: 192.168.122.251
-    overcloud-cephstorage-0:
-      ctlplane:
-        ip_address: 192.168.122.250
+    controller-0: node0
+    cephstorage-0: node1

@@ -1,0 +1,32 @@
+---
+parameter_defaults:
+  ControllerCount: 3
+  ControllerHostnameFormat: 'controller-%index%'
+  CephStorageCount: 3
+  CephStorageHostnameFormat: 'cephstorage-%index%'
+  DeployedServerPortMap:
+    node0-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.122.251
+    node1-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.122.250
+    node2-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.122.249
+    node3-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.122.248
+    node4-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.122.247
+    node5-ctlplane:
+      fixed_ips:
+        - ip_address: 192.168.122.246
+  HostnameMap:
+    controller-0: node0
+    controller-1: node1
+    controller-2: node2
+    cephstorage-0: node3
+    cephstorage-1: node4
+    cephstorage-2: node5
