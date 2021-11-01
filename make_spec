@@ -9,8 +9,11 @@
 # "Port Ansible modules and actions into pure Python or Directord components"
 # https://review.opendev.org/801630
 
-DST=/home/stack/directord_ceph/examples/directord/services/files/ceph_apply_spec
+DST=/home/stack/task-core/examples/directord/services/files/ceph_apply_spec
 
+if [[ ! -d $DST ]]; then
+    mkdir -p $DST
+fi
 if [[ ! -e /usr/bin/ansible ]]; then
     sudo dnf install ansible -y
 fi
@@ -23,7 +26,7 @@ if [[ ! -e ~/roles_data.yaml ]]; then
 fi
 
 ansible localhost -m ceph_spec_bootstrap \
-        -a "deployed_metalsmith=env/deployed_metal.yaml \
+        -a "deployed_metalsmith=/home/stack/directord_ceph/env/deployed_metal.yaml \
         new_ceph_spec=$DST/ceph_spec.yaml
         tripleo_roles=/home/stack/roles_data.yaml"
 

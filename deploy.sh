@@ -18,6 +18,10 @@ fi
 
 
 if [ $COPY -eq 1 ]; then
+
+    # remove previously generated ceph_spec
+    rm -f -v /home/stack/task-core/examples/directord/services/files/ceph_apply_spec/ceph_spec.yaml
+
     pushd env
 
     cp -v -f task-core-inventory-ceph.yaml ~/

@@ -9,9 +9,10 @@ tasks:
       - ceph_apply_spec.init
     requires:
       - cephadm_bootstrap.init
+      - ceph_make_spec.init
     jobs:
       - ADD: >
-          --blueprint files/ceph_apply_spec/ceph_spec.j2 "/home/{{ tripleo_cephadm_ssh_user }}/ceph_spec.yaml"
+          files/ceph_apply_spec/ceph_spec.yaml "/home/{{ tripleo_cephadm_ssh_user }}/ceph_spec.yaml"
           --chmod 0600
 # "
       - RUN: >-

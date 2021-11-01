@@ -1,6 +1,7 @@
 controller:
   services:
     - 2node_config
+    - ceph_make_spec
     - ssh_user
     - repos
     - ceph_packages
