@@ -1,0 +1,23 @@
+directord_server:
+  args:
+    port: 22
+  targets:
+  - name: node0
+    host: 192.168.122.251
+
+directord_clients:
+  args:
+    port: 22
+  targets:
+  - name: node0
+    host: 192.168.122.251
+  - name: node1
+    host: 192.168.122.250
+  - name: node2
+    host: 192.168.122.249
+  - name: node3
+    host: 192.168.122.248
+  - name: node4
+    host: 192.168.122.247
+  - name: node5
+    host: 192.168.122.246

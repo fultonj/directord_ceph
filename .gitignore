@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 activate
+directord-inventory-catalog.yaml
+task-core-inventory-ceph.yaml
+deployed_metal.yaml

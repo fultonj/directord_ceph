@@ -31,6 +31,16 @@ The above script does the following based on the
 The [env](env) directory contains scripts to support the above and the
 following files which get copied into the cloned ~/task-core directory:
 
+- [2node_config.yaml](env/2node_config.yaml)
+Overwrite the default 2node_config.yaml so that the following file is copied in instead
+- [task-core-ceph.yaml](env/task-core-ceph.yaml)
+Define variables necessary to deploy your service including your service's variables
+- [2node_roles_ceph.yaml](env/2node_roles_ceph.yaml)
+Map roles to services; include your new service on the role that needs it
+- [task-core-inventory-ceph6.yaml](env/task-core-inventory-ceph6.yaml)
+Map nodes to roles
+
+
 ## Deploy
 
 - [deploy.sh](deploy.sh)
@@ -39,15 +49,6 @@ The above script will copy files from the [env](env) and
 [examples/directord/services](examples/directord/services)
 directories into ~/task-core and then run `task-core` to
 deploy ceph on the nodes.
-
-- [2node_config.yaml](env/2node_config.yaml)
-Overwrite the default 2node_config.yaml so that the following file is copied in instead
-- [task-core-ceph.yaml](env/task-core-ceph.yaml)
-Define variables necessary to deploy your service including your service's variables
-- [2node_roles_ceph.yaml](env/2node_roles_ceph.yaml)
-Map roles to services; include your new service on the role that needs it
-- [task-core-inventory-ceph.yaml](env/task-core-inventory-ceph.yaml)
-Map nodes to roles
 
 
 ## Examples

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 GIT=1
+METAL=1
 SSH=1
 FILES=1
 TMATE=1
@@ -8,6 +9,17 @@ TMATE=1
 if [ $GIT -eq 1 ]; then
     git config --global user.email fulton@redhat.com
     git config --global user.name "John Fulton"
+fi
+
+if [ $METAL -eq 1 ]; then
+    NUM=$(cat ~/hosts | wc -l)
+    ln -v -s directord-inventory-catalog${NUM}.yaml directord-inventory-catalog.yaml
+    pushd ..
+    ln -v -s task-core-inventory-ceph${NUM}.yaml task-core-inventory-ceph.yaml
+    popd
+    pushd ../../env
+    ln -v -s deployed_metal${NUM}.yaml deployed_metal.yaml
+    popd
 fi
 
 if [ $SSH -eq 1 ]; then
@@ -19,10 +31,10 @@ if [ $SSH -eq 1 ]; then
     fi
     rm -f ~/.ssh/id_ed25519{,.pub}
     ssh-keygen -t ed25519 -N "" -f ~/.ssh/id_ed25519
-    ssh-copy-id -i ~/.ssh/id_ed25519 192.168.122.251
-    ssh-copy-id -i ~/.ssh/id_ed25519 192.168.122.250
-    ssh -i ~/.ssh/id_ed25519 192.168.122.251 "tail -1 ~/.ssh/authorized_keys"
-    ssh -i ~/.ssh/id_ed25519 192.168.122.250 "tail -1 ~/.ssh/authorized_keys"
+    for IP in $(cat ~/hosts | awk {'print $1'}); do
+        ssh-copy-id -i ~/.ssh/id_ed25519 $IP
+        ssh -i ~/.ssh/id_ed25519 $IP "tail -1 ~/.ssh/authorized_keys"
+    done
 fi
 
 if [ $FILES -eq 1 ]; then
