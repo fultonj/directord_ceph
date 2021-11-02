@@ -1,10 +1,10 @@
 controller:
   services:
     - 2node_config
-    - ceph_make_spec
     - ssh_user
     - repos
     - ceph_packages
+    - ceph_make_spec
     - ceph_bootstrap
     - ceph_apply_spec
 

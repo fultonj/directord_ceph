@@ -6,5 +6,7 @@ tasks:
     driver: local
     provides:
       - ceph_make_spec.init
+    requires:
+      - ceph_packages.init
     command: >
       /home/stack/directord_ceph/make_spec
